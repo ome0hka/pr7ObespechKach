@@ -1,0 +1,4449 @@
+{
+  "info": {
+    "_postman_id": "8e000bce-e2d8-45f8-b699-27756b182e33",
+    "name": "ServerREST",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53169904",
+    "_collection_link": "https://go.postman.co/collection/53169904-8e000bce-e2d8-45f8-b699-27756b182e33?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "BASE",
+      "item": [
+        {
+          "name": "User/Login",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "pm.collectionVariables.set('_id', response._id)",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List Users",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Correct User',()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response._id).to.be.eql(pm.collectionVariables.get('_id'))",
+                      "    pm.expect(response.nome).to.be.eql(pm.collectionVariables.get('randomName'))",
+                      "    pm.expect(response.email).to.be.eql(pm.collectionVariables.get('randomEmail')) ",
+                      "    })"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('updated successfully', ()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Registro updated successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"Fulano da Silva\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('deleted successfully', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID (already deleted)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "pm.test('Correct User',()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('User not found')",
+                      "    })"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Products",
+          "item": [
+            {
+              "name": "List All Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idProduto',response._id)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"dock2\",\n  \"preco\": 470,\n  \"descricao\": \"dock\",\n  \"quantidade\": 381\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Product by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Product",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"Mudei\",\n  \"preco\": 470,\n  \"descricao\": \"Mouse\",\n  \"quantidade\": 381\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Product",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Carts",
+          "item": [
+            {
+              "name": "List Carts",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idCarrinho', response._id)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"produtos\": [\n    {\n      \"idProduto\": \"BeeJh5lz3k6kSIzA\",\n      \"quantidade\": 1\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Cart by ID",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idCarrinho}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Complete Purchase",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/concluir-compra",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    "concluir-compra"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Purchase",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/cancelar-compra",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    "cancelar-compra"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "This folder serves as base for manual and automated tests, exceptions are separated by category in the following folders"
+    },
+    {
+      "name": "User Tests",
+      "item": [
+        {
+          "name": "Happy Path",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('updated successfully', ()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Registro updated successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let novoemail = ('novo_'+ pm.collectionVariables.get('randomEmail'))",
+                      "console.log(novoemail)",
+                      "",
+                      "pm.collectionVariables.set('randomEmail', novoemail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"Fulano da Silva\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Correct User',()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response._id).to.be.eql(pm.collectionVariables.get('_id'))",
+                      "    pm.expect(response.nome).to.be.eql(pm.collectionVariables.get('randomName'))",
+                      "    pm.expect(response.email).to.be.eql(pm.collectionVariables.get('randomEmail')) ",
+                      "    })"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('deleted successfully', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID (already deleted)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "pm.test('Correct User',()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('User not found')",
+                      "    })"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Register with Existing Email",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.collectionVariables.set('_id', response._id)",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Duplicate User Registration",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('deleted successfully', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "Registration done twice with the same email, expected to fail, error 400"
+        },
+        {
+          "name": "Update with Existing Email",
+          "item": [
+            {
+              "name": "Cadastrar Usuario_primeiro",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.collectionVariables.set('_id', response._id)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*9000)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)",
+                      "pm.collectionVariables.set('email_repetido', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cadastrar Usuario_segundo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.collectionVariables.set('_id', response._id)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*9000)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Correct User',()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response._id).to.be.eql(pm.collectionVariables.get('_id'))",
+                      "    pm.expect(response.nome).to.be.eql(pm.collectionVariables.get('randomName'))",
+                      "    pm.expect(response.email).to.be.eql(pm.collectionVariables.get('randomEmail')) ",
+                      "    })"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "",
+                      "pm.test('Email already used', ()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('message')",
+                      "    pm.expect(response.message).to.be.eql('This email is already in use')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{email_repetido}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('deleted successfully', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "Update user with already registered email, expected to fail, error 400"
+        },
+        {
+          "name": "Update without ID",
+          "item": [
+            {
+              "name": "editar usuario SEM ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "IDNAOVALIDO"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test('Correct User',()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response._id).to.be.eql(pm.collectionVariables.get('_id'))",
+                      "    pm.expect(response.nome).to.be.eql(pm.collectionVariables.get('randomName'))",
+                      "    pm.expect(response.email).to.be.eql(pm.collectionVariables.get('randomEmail')) ",
+                      "    })"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "**When editing a user without ID, system should create new user. Expected code 201**"
+        },
+        {
+          "name": "Delete User with Cart",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idCarrinho', response._id)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"produtos\": [\n    {\n      \"idProduto\": \"BeeJh5lz3k6kSIzA\",\n      \"quantidade\": 1\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "",
+                      "pm.test('Não Permitido', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('idCarrinho')",
+                      "    pm.expect(response.idCarrinho).to.be.eql(pm.collectionVariables.get('idCarrinho'))",
+                      "    pm.expect(response.message).to.be.eql('Not allowed to delete user with registered cart')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "**Not allowed to delete user with cart, expect error 400**"
+        }
+      ],
+      "description": "**Happy Path and Expected Exceptions for User Category, Tests Automated with Session Cleanup**"
+    },
+    {
+      "name": "Product Tests",
+      "item": [
+        {
+          "name": "Product with Same Name",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idProduto',response._id)",
+                      "",
+                      "",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('cadastrado com sucesso', () => {",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.exist",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadeProduto = Math.floor(Math.random()*100)",
+                      "let nomeProduto = `Teste_${quantidadeProduto}`",
+                      "pm.collectionVariables.set('quantidadeProduto', quantidadeProduto)",
+                      "pm.collectionVariables.set('nomeProduto', nomeProduto)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{nomeProduto}}\",\n  \"preco\": 470,\n  \"descricao\": \"Teste\",\n  \"quantidade\": {{quantidadeProduto}}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cadastrar produto com nome repetido",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "",
+                      "",
+                      "pm.test(\"Status code is 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "",
+                      "pm.test('product already exists', function () {",
+                      "     pm.expect(pm.response.json()).to.be.an('object');",
+                      "     pm.expect(pm.response.json().message).to.exist;",
+                      "     pm.expect(pm.response.json().message).to.be.eql('Product with this name already exists')",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{nomeProduto}}\",\n  \"preco\": 470,\n  \"descricao\": \"Teste\",\n  \"quantidade\": {{quantidadeProduto}}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('product deleted', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('object')",
+                      "    pm.expect(pm.response.json().message).to.exist",
+                      "    pm.expect(pm.response.json().message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('deleted successfully', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "**Cannot create product with already registered name, expect to fail, error 400**"
+        },
+        {
+          "name": "Delete Product in Cart",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idProduto',response._id)",
+                      "",
+                      "",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('cadastrado com sucesso', () => {",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.exist",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadeProduto = Math.floor(Math.random()*100)",
+                      "let nomeProduto = `Teste_${quantidadeProduto}`",
+                      "pm.collectionVariables.set('quantidadeProduto', quantidadeProduto)",
+                      "pm.collectionVariables.set('nomeProduto', nomeProduto)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{nomeProduto}}\",\n  \"preco\": 470,\n  \"descricao\": \"Teste\",\n  \"quantidade\": {{quantidadeProduto}}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idCarrinho', response._id)",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('Criado com Sucesso',()=> {",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.massage).to.be.eql('Cadastro realizado com sucesso')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadePedido = Math.round((pm.collectionVariables.get('quantidadeProduto')/2))",
+                      "",
+                      "pm.collectionVariables.set('quantidadePedido', quantidadePedido)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"produtos\": [\n    {\n      \"idProduto\": \"{{idProduto}}\",\n      \"quantidade\": {{quantidadePedido}}\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "",
+                      "// pm.test('product deleted', () => {",
+                      "//     pm.expect(pm.response.json()).to.be.an('object')",
+                      "//     pm.expect(pm.response.json().message).to.exist",
+                      "//     pm.expect(pm.response.json().message).to.be.eql('Record deleted successfully')",
+                      "// })",
+                      "",
+                      "",
+                      "pm.test('Não permitido deletar', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.exist",
+                      "    pm.expect(response.message).to.be.eql('Não é permitido excluir produto que faz parte de carrinho')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Purchase",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/cancelar-compra",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    "cancelar-compra"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('product deleted', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('object')",
+                      "    pm.expect(pm.response.json().message).to.exist",
+                      "    pm.expect(pm.response.json().message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('deleted successfully', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "**Cannot delete product in cart, expect to fail, error 400**"
+        },
+        {
+          "name": "Update Product without ID",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "",
+                      "const response = pm.response.json()",
+                      "pm.collectionVariables.set('idProduto',response._id)",
+                      "",
+                      "pm.test('Cadastro realizado', () => {",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.exist",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadeProduto = Math.floor(Math.random()*100)",
+                      "let nomeProduto = `Teste_${quantidadeProduto}`",
+                      "pm.collectionVariables.set('quantidadeProduto', quantidadeProduto)",
+                      "pm.collectionVariables.set('nomeProduto', nomeProduto)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{nomeProduto}}\",\n  \"preco\": 470,\n  \"descricao\": \"Teste\",\n  \"quantidade\": {{quantidadeProduto}}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "idInvalido"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Product by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "const response = pm.response.json()",
+                      "",
+                      "",
+                      "pm.test('produto listado corretamente', ()=> {",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.nome).to.exist",
+                      "    pm.expect(response.nome).to.be.eql(pm.collectionVariables.get('nomeProduto'))",
+                      "    pm.expect(response._id).to.be.eql(pm.collectionVariables.get('idProduto'))",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('product deleted', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('object')",
+                      "    pm.expect(pm.response.json().message).to.exist",
+                      "    pm.expect(pm.response.json().message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('deleted successfully', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{_id}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "**When editing product without ID in request, expect to create new product in stock, code 201**"
+        }
+      ]
+    },
+    {
+      "name": "Cart Tests",
+      "item": [
+        {
+          "name": "One Cart per User",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idCarrinho', response._id)",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"produtos\": [\n    {\n      \"idProduto\": \"BeeJh5lz3k6kSIzA\",\n      \"quantidade\": 1\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Cart 2",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idCarrinho', response._id)",
+                      "",
+                      "",
+                      "pm.test(\"Status code is 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"produtos\": [\n    {\n      \"idProduto\": \"BeeJh5lz3k6kSIzA\",\n      \"quantidade\": 1\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Purchase",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/cancelar-compra",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    "cancelar-compra"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "**Only 1 cart per user allowed, expect code 400**"
+        },
+        {
+          "name": "Add Products to Cart - Decreases Stock",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idProduto',response._id)",
+                      "",
+                      "",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadeProduto = Math.floor(Math.random()*100)",
+                      "let nomeProduto = `Teste_${quantidadeProduto}`",
+                      "pm.collectionVariables.set('quantidadeProduto', quantidadeProduto)",
+                      "pm.collectionVariables.set('nomeProduto', nomeProduto)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{nomeProduto}}\",\n  \"preco\": 470,\n  \"descricao\": \"Teste\",\n  \"quantidade\": {{quantidadeProduto}}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idCarrinho', response._id)",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadePedido = Math.round((pm.collectionVariables.get('quantidadeProduto')/2))",
+                      "",
+                      "pm.collectionVariables.set('quantidadePedido', quantidadePedido)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"produtos\": [\n    {\n      \"idProduto\": \"{{idProduto}}\",\n      \"quantidade\": {{quantidadePedido}}\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Product by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "",
+                      "pm.test('Produtos no estoque', ()=> {",
+                      "    const response = pm.response.json()",
+                      "    const estoque = (pm.collectionVariables.get('quantidadeProduto') - pm.collectionVariables.get('quantidadePedido'))",
+                      "    console.log(estoque)",
+                      "    pm.expect(response).to.haveOwnProperty('quantidade')",
+                      "    pm.expect(response.quantidade).to.be.eql(estoque)",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Purchase",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/cancelar-compra",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    "cancelar-compra"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "**When adding products to cart, same quantity must be subtracted from stock**"
+        },
+        {
+          "name": "Cancel Purchase - Restores Products to Stock",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idProduto',response._id)",
+                      "",
+                      "",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadeProduto = Math.floor(Math.random()*100)",
+                      "let nomeProduto = `Teste_${quantidadeProduto}`",
+                      "pm.collectionVariables.set('quantidadeProduto', quantidadeProduto)",
+                      "pm.collectionVariables.set('nomeProduto', nomeProduto)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{nomeProduto}}\",\n  \"preco\": 470,\n  \"descricao\": \"Teste\",\n  \"quantidade\": {{quantidadeProduto}}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idCarrinho', response._id)",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadePedido = Math.round((pm.collectionVariables.get('quantidadeProduto')/2))",
+                      "",
+                      "pm.collectionVariables.set('quantidadePedido', quantidadePedido)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"produtos\": [\n    {\n      \"idProduto\": \"{{idProduto}}\",\n      \"quantidade\": {{quantidadePedido}}\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Purchase",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/cancelar-compra",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    "cancelar-compra"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Product by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "",
+                      "pm.test('Produtos no estoque', ()=> {",
+                      "    const response = pm.response.json()",
+                      "    ",
+                      "    pm.expect(response).to.haveOwnProperty(quantidade)",
+                      "    pm.expect(response.quantidade).to.be.eql(pm.collectionVariables.get('quantidadeProduto'))",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/produtos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idProduto}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "**When canceling purchase, cart is deleted and products are returned to stock**"
+        },
+        {
+          "name": "Happy Path",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('registration successful', () =>{",
+                      "    const response = pm.response.json()",
+                      "    pm.collectionVariables.set('_id', response._id)",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('_id')",
+                      "    pm.expect(response.message).to.be.eql('Cadastro realizado com sucesso')",
+                      "})",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let randomNumber = Math.floor(Math.random()*100)",
+                      "let randomName = `user_${randomNumber}`",
+                      "let randomEmail = `user_${randomNumber}@qa.com`",
+                      "console.log(randomEmail, randomName)",
+                      "pm.collectionVariables.set('randomName', randomName)",
+                      "pm.collectionVariables.set('randomEmail', randomEmail)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{randomName}}\",\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\",\n  \"administrador\": \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "const authorizarionHeader = response.authorization",
+                      "pm.collectionVariables.set('authToken', authorizarionHeader.replace(\"Bearer \", \"\"))",
+                      "//console.log(pm.collectionVariables.get('authToken'))",
+                      "",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Login successful', () =>{",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response).to.haveOwnProperty('authorization')",
+                      "    pm.expect(response.message).to.be.eql('Login performed successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{randomEmail}}\",\n  \"password\": \"teste\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idProduto',response._id)",
+                      "",
+                      "",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadeProduto = Math.floor(Math.random()*100)",
+                      "let nomeProduto = `Teste_${quantidadeProduto}`",
+                      "pm.collectionVariables.set('quantidadeProduto', quantidadeProduto)",
+                      "pm.collectionVariables.set('nomeProduto', nomeProduto)",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"{{nomeProduto}}\",\n  \"preco\": 470,\n  \"descricao\": \"Teste\",\n  \"quantidade\": {{quantidadeProduto}}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/produtos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "produtos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json()",
+                      "",
+                      "pm.collectionVariables.set('idCarrinho', response._id)",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('Criado com Sucesso',()=> {",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.massage).to.be.eql('Cadastro realizado com sucesso')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "let quantidadePedido = Math.round((pm.collectionVariables.get('quantidadeProduto')/2))",
+                      "",
+                      "pm.collectionVariables.set('quantidadePedido', quantidadePedido)"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"produtos\": [\n    {\n      \"idProduto\": \"{{idProduto}}\",\n      \"quantidade\": {{quantidadePedido}}\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Cart by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "",
+                      "pm.test('Verificar usuario', ()=>{",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.idUsuario).to.be.eql(pm.collectionVariables.get('_id'))",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/:_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    ":_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "_id",
+                      "value": "{{idCarrinho}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Complete Purchase",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Sucesso', () => {",
+                      "    const response = pm.response.json()",
+                      "    pm.expect(response).to.be.an('object')",
+                      "    pm.expect(response.message).to.be.eql('Record deleted successfully')",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carrinhos/concluir-compra",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carrinhos",
+                    "concluir-compra"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "**Happy Path and Expected Exceptions for Cart Category, Tests Automated with Session Cleanup**"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://serverest.dev/"
+    },
+    {
+      "key": "_id",
+      "value": ""
+    },
+    {
+      "key": "authToken",
+      "value": "Insert Your Token"
+    },
+    {
+      "key": "randomName",
+      "value": ""
+    },
+    {
+      "key": "randomEmail",
+      "value": ""
+    },
+    {
+      "key": "idProduto",
+      "value": ""
+    },
+    {
+      "key": "idCarrinho",
+      "value": ""
+    },
+    {
+      "key": "email_repetido",
+      "value": ""
+    },
+    {
+      "key": "quantidadeProduto",
+      "value": ""
+    },
+    {
+      "key": "nomeProduto",
+      "value": ""
+    },
+    {
+      "key": "quantidadePedido",
+      "value": ""
+    }
+  ]
+}
